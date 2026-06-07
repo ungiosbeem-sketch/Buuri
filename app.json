@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "Buuri Chat",
+    "slug": "buuri-chat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTabletMode": true,
+      "bundleIdentifier": "com.buuri.chat",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to your camera for video calls",
+        "NSMicrophoneUsageDescription": "This app needs access to your microphone for calls",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library",
+        "NSPhotoLibraryAddUsageDescription": "This app needs permission to save photos"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.buuri.chat",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them.",
+          "cameraPermission": "The app needs access to your camera to take photos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#FFFFFF"
+        }
+      ]
+    ],
+    "scheme": "buuri",
+    "extra": {
+      "eas": {
+        "projectId": "buuri-chat-app"
+      }
+    }
+  }
+}
