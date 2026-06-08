@@ -1,9 +1,12 @@
+# Faylka eas.json ku beddel:
+
+cat > eas.json << 'EOF'
 {
   "cli": {
     "version": ">= 7.0.0",
-    "appVersionSource": "remote",
+    "appVersionSource": "local",
     "promptToConfigurePushNotifications": false,
-    "requireCommit": true
+    "requireCommit": false
   },
   "build": {
     "development": {
@@ -11,110 +14,33 @@
       "distribution": "internal",
       "channel": "development",
       "ios": {
-        "simulator": true,
-        "resourceClass": "m1-medium"
+        "simulator": true
       },
       "android": {
-        "buildType": "apk",
-        "resourceClass": "medium"
-      },
-      "env": {
-        "APP_ENV": "development"
-      },
-      "cache": {
-        "disabled": false,
-        "key": "development-cache-v1",
-        "paths": ["node_modules", "package-lock.json"]
+        "buildType": "apk"
       }
     },
     "base": {
       "distribution": "internal",
       "channel": "preview",
       "ios": {
-        "simulator": false,
-        "resourceClass": "m1-medium"
-      },
-      "android": {
-        "buildType": "apk",
-        "resourceClass": "medium"
-      },
-      "env": {
-        "APP_ENV": "staging"
-      },
-      "cache": {
-        "disabled": false,
-        "key": "preview-cache-v1",
-        "paths": ["node_modules", "package-lock.json"]
-      }
-    },
-    "production": {
-      "autoIncrement": true,
-      "channel": "production",
-      "ios": {
-        "resourceClass": "m1-medium",
         "simulator": false
       },
       "android": {
-        "buildType": "app-bundle",
-        "resourceClass": "medium"
+        "buildType": "apk"
       },
-      "env": {
-        "APP_ENV": "production"
-      },
-      "cache": {
-        "disabled": false,
-        "key": "production-cache-v1",
-        "paths": ["node_modules", "package-lock.json"]
-      }
+      "autoIncrement": false
     },
-    "production-ios": {
-      "extends": "production",
-      "platform": "ios",
-      "ios": {
-        "resourceClass": "m1-medium",
-        "simulator": false,
-        "image": "latest"
-      }
-    },
-    "production-android": {
-      "extends": "production",
-      "platform": "android",
-      "android": {
-        "resourceClass": "medium",
-        "buildType": "app-bundle",
-        "image": "latest"
-      }
-    }
-  },
-  "submit": {
     "production": {
+      "autoIncrement": false,
+      "channel": "production",
       "ios": {
-        "appleId": "your-apple-id@example.com",
-        "ascAppId": "your-app-store-connect-id",
-        "appleTeamId": "your-apple-team-id",
-        "sku": "com.neumochat.app",
-        "language": "en-US",
-        "companyName": "NeumoChat"
+        "simulator": false
       },
       "android": {
-        "serviceAccountKeyPath": "./google-play-service-account-key.json",
-        "track": "production",
-        "releaseStatus": "completed"
-      }
-    },
-    "staging": {
-      "ios": {
-        "appleId": "your-apple-id@example.com",
-        "ascAppId": "your-app-store-connect-id",
-        "appleTeamId": "your-apple-team-id",
-        "sku": "com.neumochat.app.staging",
-        "language": "en-US"
-      },
-      "android": {
-        "serviceAccountKeyPath": "./google-play-service-account-key-staging.json",
-        "track": "internal",
-        "releaseStatus": "draft"
+        "buildType": "app-bundle"
       }
     }
   }
 }
+EOF
