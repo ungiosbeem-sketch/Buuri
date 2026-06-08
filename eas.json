@@ -1,6 +1,4 @@
-# Faylka eas.json ku beddel:
 
-cat > eas.json << 'EOF'
 {
   "cli": {
     "version": ">= 7.0.0",
