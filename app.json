@@ -1,106 +1,44 @@
 {
   "expo": {
-    "name": "abdallakeynan",
+    "name": "Abdalla Keynan",
     "slug": "abdalla-keynan",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "scheme": "abdallakeynan",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#3B82F6"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.neumochat.app",
-      "buildNumber": "1.0.0",
-      "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
-        "NSCameraUsageDescription": "NeumoChat uses camera to take photos and share them in chats",
-        "NSPhotoLibraryUsageDescription": "NeumoChat needs access to photo library to share images and videos",
-        "NSMicrophoneUsageDescription": "NeumoChat needs microphone access to send voice messages",
-        "NSDocumentsFolderUsageDescription": "NeumoChat needs access to documents to share files"
-      }
-    },
     "android": {
+      "package": "com.abdallakeynan.chat",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#3B82F6"
-      },
-      "package": "com.neumochat.app",
-      "versionCode": 1,
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.INTERNET",
-        "android.permission.WAKE_LOCK",
-        "android.permission.VIBRATE",
-        "android.permission.RECEIVE_BOOT_COMPLETED",
-        "android.permission.ACCESS_NETWORK_STATE"
-      ]
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "ios": {
+      "bundleIdentifier": "com.abdallakeynan.chat",
+      "supportsTablet": true
     },
     "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/notification-icon.png",
-          "color": "#3B82F6",
-          "sounds": ["./assets/notification.wav"]
-        }
-      ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Allow NeumoChat to access your photos to share images.",
-          "cameraPermission": "Allow NeumoChat to access your camera to take photos."
-        }
-      ],
-      [
-        "expo-av",
-        {
-          "microphonePermission": "Allow NeumoChat to access your microphone to send voice messages."
-        }
-      ],
-      [
-        "expo-document-picker",
-        {
-          "iCloudContainerEnvironment": "Production"
-        }
-      ]
+      "expo-router",
+      "expo-notifications",
+      "expo-image-picker",
+      "expo-av"
     ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
       "eas": {
         "projectId": "4f5374fa-1398-423f-97fd-020f5ff9c9e3"
+      },
+      "router": {
+        "origin": false
       }
-    },
-    "updates": {
-      "url": "https://u.expo.dev/your-project-id-here",
-      "enabled": true,
-      "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "notification": {
-      "icon": "./assets/notification-icon.png",
-      "color": "#3B82F6",
-      "iosDisplayInForeground": true,
-      "androidMode": "default",
-      "androidCollapsedTitle": "New message"
-    },
-    "description": "Modern messaging application with neumorphism design and real-time chat",
-    "githubUrl":"https://github.com/ungiosbeem-sketch/Buuri"
+    }
   }
 }
