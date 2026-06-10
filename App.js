@@ -1,355 +1,393 @@
-import 'react-native-gesture-handler';
-import 'react-native-get-random-values';
-import 'react-native-url-polyfill/auto';
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StatusBar } from 'expo-status-bar';
-import * as Notifications from 'expo-notifications';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// Screens
-import HomeScreen from './src/screens/HomeScreen';
-import ChatScreen from './src/screens/ChatScreen';
-import ContactsScreen from './src/screens/ContactsScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
+// ========================
+// Ride Screen (Sida screenshot-ka)
+// ========================
+const RideScreen = () => {
+  const [whereTo, setWhereTo] = useState('');
 
-// Store
-import useThemeStore from './src/store/themeStore';
-import { useAuthStore } from './src/store/authStore';
+  // Taariikhda safarrada
+  const tripHistory = [
+    { id: '1', date: 'Aug 24, 7:10 PM', from: 'Zaporiz\'ke Hwy, 40', price: 'UAH 0.00', status: 'Canceled' },
+    { id: '2', date: 'Aug 23, 7:03 PM', from: 'Zaporiz\'ke Hwy, 40', price: 'UAH 88.14', status: 'Completed' },
+    { id: '3', date: 'Aug 20, 6:02 PM', from: 'Zaporiz\'ke Hwy, 40', price: 'UAH 109.26', status: 'Completed' },
+    { id: '4', date: 'Aug 20, 3:48 PM', from: 'Mechnykova St, 19', price: 'UAH 113.75', status: 'Completed' },
+    { id: '5', date: 'Aug 19, 9:15 AM', from: 'Zaporiz\'ke Hwy, 40', price: 'UAH 45.50', status: 'Completed' },
+  ];
 
-// Services
-import { supabase, initializePresence, cleanup } from './src/services/supabase';
-import { registerForPushNotifications } from './src/services/notificationService';
+  const renderTripItem = ({ item }) => (
+    <View style={styles.tripItem}>
+      <View style={styles.tripLeft}>
+        <Text style={styles.tripDate}>{item.date}</Text>
+        <Text style={styles.tripFrom}>{item.from}</Text>
+      </View>
+      <View style={styles.tripRight}>
+        <Text style={styles.tripPrice}>{item.price}</Text>
+        {item.status === 'Canceled' && <Text style={styles.canceledBadge}>Canceled</Text>}
+      </View>
+    </View>
+  );
 
-// Types
+  return (
+    <ScrollView style={styles.screenContainer} showsVerticalScrollIndicator={false}>
+      {/* Header: Hi there Stanislav Kashchishen */}
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Hi there</Text>
+        <Text style={styles.name}>Stanislav Kashchishen</Text>
+      </View>
+
+      {/* Where to? input */}
+      <View style={styles.whereToContainer}>
+        <Ionicons name="search-outline" size={20} color="#666" />
+        <TextInput
+          style={styles.whereToInput}
+          placeholder="Where to?"
+          placeholderTextColor="#999"
+          value={whereTo}
+          onChangeText={setWhereTo}
+        />
+      </View>
+
+      {/* Now + Addresses */}
+      <View style={styles.nowContainer}>
+        <Text style={styles.nowText}>Now</Text>
+        <View style={styles.addressCard}>
+          <Ionicons name="location-outline" size={20} color="#007AFF" />
+          <Text style={styles.addressText}>Zaporiz'ke Hwy, 40</Text>
+        </View>
+        <View style={styles.addressCard}>
+          <Ionicons name="navigate-outline" size={20} color="#34C759" />
+          <Text style={styles.addressText}>Mechnykova St, 19</Text>
+        </View>
+      </View>
+
+      {/* Activity / Past section */}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Activity</Text>
+        <Text style={styles.pastLink}>Past</Text>
+      </View>
+
+      {/* Trip History List */}
+      <FlatList
+        data={tripHistory}
+        renderItem={renderTripItem}
+        keyExtractor={item => item.id}
+        scrollEnabled={false}
+        style={styles.tripList}
+      />
+
+      {/* Links (Help, Wallet, Trips, Messages, Settings, Earn, Legal) */}
+      <View style={styles.linksGrid}>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="help-circle-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Help</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="wallet-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Wallet</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="car-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Trips</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="chatbubble-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Messages</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="settings-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkItem}>
+          <Ionicons name="car-sport-outline" size={28} color="#007AFF" />
+          <Text style={styles.linkText}>Earn by driving or delivering</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.legalLink}>
+        <Text style={styles.legalText}>Legal</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.version}>v1.5.3.8 10003</Text>
+    </ScrollView>
+  );
+};
+
+// ========================
+// Promo Screen
+// ========================
+const PromoScreen = () => (
+  <View style={styles.placeholderContainer}>
+    <Ionicons name="pricetag-outline" size={60} color="#ccc" />
+    <Text style={styles.placeholderText}>Promos & Discounts</Text>
+    <Text style={styles.subText}>No active promos at the moment</Text>
+  </View>
+);
+
+// ========================
+// Delivery Screen
+// ========================
+const DeliveryScreen = () => (
+  <View style={styles.placeholderContainer}>
+    <Ionicons name="cube-outline" size={60} color="#ccc" />
+    <Text style={styles.placeholderText}>Food & Package Delivery</Text>
+    <Text style={styles.subText}>Track your deliveries here</Text>
+  </View>
+);
+
+// ========================
+// Travel Screen
+// ========================
+const TravelScreen = () => (
+  <View style={styles.placeholderContainer}>
+    <Ionicons name="airplane-outline" size={60} color="#ccc" />
+    <Text style={styles.placeholderText}>Travel & Intercity</Text>
+    <Text style={styles.subText}>Book rides to other cities</Text>
+  </View>
+);
+
+// ========================
+// Food Screen
+// ========================
+const FoodScreen = () => (
+  <View style={styles.placeholderContainer}>
+    <Ionicons name="restaurant-outline" size={60} color="#ccc" />
+    <Text style={styles.placeholderText}>Food Delivery</Text>
+    <Text style={styles.subText}>Order from nearby restaurants</Text>
+  </View>
+);
+
+// ========================
+// Bottom Tab Navigator
+// ========================
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-const queryClient = new QueryClient();
 
-// Configure notifications
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
+const App = () => {
+  return (
+    <NavigationContainer>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <SafeAreaView style={styles.safeArea}>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+              if (route.name === 'Ride') iconName = focused ? 'car' : 'car-outline';
+              else if (route.name === 'Promo') iconName = focused ? 'pricetag' : 'pricetag-outline';
+              else if (route.name === 'Delivery') iconName = focused ? 'cube' : 'cube-outline';
+              else if (route.name === 'Travel') iconName = focused ? 'airplane' : 'airplane-outline';
+              else if (route.name === 'Food') iconName = focused ? 'fast-food' : 'fast-food-outline';
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: '#007AFF',
+            tabBarInactiveTintColor: '#8E8E93',
+            tabBarStyle: styles.tabBar,
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="Ride" component={RideScreen} />
+          <Tab.Screen name="Promo" component={PromoScreen} />
+          <Tab.Screen name="Delivery" component={DeliveryScreen} />
+          <Tab.Screen name="Travel" component={TravelScreen} />
+          <Tab.Screen name="Food" component={FoodScreen} />
+        </Tab.Navigator>
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+};
+
+// ========================
+// Styles
+// ========================
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  screenContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+  },
+  header: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  greeting: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#000',
+  },
+  name: {
+    fontSize: 18,
+    color: '#555',
+    marginTop: 4,
+  },
+  whereToContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F7',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  whereToInput: {
+    flex: 1,
+    fontSize: 16,
+    marginLeft: 8,
+    color: '#000',
+  },
+  nowContainer: {
+    marginBottom: 24,
+  },
+  nowText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: 8,
+  },
+  addressCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9F9FB',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
+  },
+  addressText: {
+    fontSize: 16,
+    marginLeft: 12,
+    color: '#000',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000',
+  },
+  pastLink: {
+    fontSize: 14,
+    color: '#007AFF',
+  },
+  tripList: {
+    marginBottom: 20,
+  },
+  tripItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFEFF4',
+  },
+  tripLeft: {
+    flex: 2,
+  },
+  tripDate: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  tripFrom: {
+    fontSize: 12,
+    color: '#777',
+    marginTop: 2,
+  },
+  tripRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  tripPrice: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+  },
+  canceledBadge: {
+    fontSize: 10,
+    color: '#FF3B30',
+    marginTop: 4,
+  },
+  linksGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  linkItem: {
+    width: '30%',
+    alignItems: 'center',
+    backgroundColor: '#F9F9FB',
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
+  },
+  linkText: {
+    fontSize: 12,
+    marginTop: 6,
+    color: '#007AFF',
+    textAlign: 'center',
+  },
+  legalLink: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  legalText: {
+    fontSize: 14,
+    color: '#007AFF',
+  },
+  version: {
+    textAlign: 'center',
+    fontSize: 11,
+    color: '#aaa',
+    marginVertical: 16,
+  },
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  placeholderText: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginTop: 16,
+    color: '#333',
+  },
+  subText: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 8,
+  },
+  tabBar: {
+    paddingBottom: 8,
+    paddingTop: 8,
+    height: 60,
+    borderTopWidth: 0.5,
+    borderTopColor: '#E5E5EA',
+  },
 });
 
-// Colors
-const lightColors = {
-  background: '#F0F2F5',
-  surface: '#FFFFFF',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  primary: '#3B82F6',
-  chatBubbleSent: '#3B82F6',
-  chatBubbleReceived: '#FFFFFF',
-};
-
-const darkColors = {
-  background: '#121212',
-  surface: '#1E1E1E',
-  text: '#E5E7EB',
-  textSecondary: '#9CA3AF',
-  border: '#2C2C2C',
-  primary: '#3B82F6',
-  chatBubbleSent: '#3B82F6',
-  chatBubbleReceived: '#2C2C2C',
-};
-
-// Animated Splash Screen
-function AnimatedSplashScreen({ onFinish }) {
-  const [isReady, setIsReady] = useState(false);
-  const fadeAnim = useState(new Animated.Value(1))[0];
-  const scaleAnim = useState(new Animated.Value(0.5))[0];
-  const translateYAnim = useState(new Animated.Value(50))[0];
-
-  useEffect(() => {
-    // Entrance animation
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 8,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateYAnim, {
-        toValue: 0,
-        friction: 8,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Exit animation after delay
-    setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 1000,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        setIsReady(true);
-        onFinish();
-      });
-    }, 2000);
-  }, []);
-
-  if (isReady) return null;
-
-  return (
-    <Animated.View
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: '#3B82F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-        opacity: fadeAnim,
-        zIndex: 999,
-      }}
-    >
-      <Animated.View
-        style={{
-          transform: [{ scale: scaleAnim }, { translateY: translateYAnim }],
-          alignItems: 'center',
-        }}
-      >
-        <View
-          style={{
-            width: 120,
-            height: 120,
-            borderRadius: 60,
-            backgroundColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 20,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.3,
-            shadowRadius: 20,
-            elevation: 10,
-          }}
-        >
-          <Icon name="chatbubbles" size={60} color="#3B82F6" />
-        </View>
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: 'bold',
-            color: 'white',
-            letterSpacing: 2,
-          }}
-        >
-          NeumoChat
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: 'rgba(255,255,255,0.8)',
-            marginTop: 10,
-          }}
-        >
-          Connect Instantly
-        </Text>
-      </Animated.View>
-    </Animated.View>
-  );
-}
-
-// Main Tab Navigator
-function MainTabs() {
-  const { isDarkMode } = useThemeStore();
-  const colors = isDarkMode ? darkColors : lightColors;
-
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName = '';
-          switch (route.name) {
-            case 'Chats':
-              iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
-              break;
-            case 'Contacts':
-              iconName = focused ? 'people' : 'people-outline';
-              break;
-            case 'Profile':
-              iconName = focused ? 'person' : 'person-outline';
-              break;
-            case 'Settings':
-              iconName = focused ? 'settings' : 'settings-outline';
-              break;
-          }
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          height: 60,
-          paddingBottom: 10,
-          paddingTop: 5,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 4,
-          elevation: 8,
-        },
-        headerStyle: {
-          backgroundColor: colors.surface,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        },
-        headerTitleStyle: {
-          color: colors.text,
-          fontWeight: '600',
-          fontSize: 18,
-        },
-        headerTintColor: colors.text,
-        headerTitleAlign: 'center',
-      })}
-    >
-      <Tab.Screen 
-        name="Chats" 
-        component={HomeScreen} 
-        options={{
-          title: 'Messages',
-          headerLeft: () => null,
-        }}
-      />
-      <Tab.Screen name="Contacts" component={ContactsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
-    </Tab.Navigator>
-  );
-}
-
-// Main Stack Navigator
-function AppNavigator() {
-  const { isDarkMode } = useThemeStore();
-  const colors = isDarkMode ? darkColors : lightColors;
-
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.surface,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        },
-        headerTitleStyle: {
-          color: colors.text,
-          fontWeight: '600',
-        },
-        headerTintColor: colors.text,
-        cardStyle: { backgroundColor: colors.background },
-        headerBackTitle: 'Back',
-      }}
-    >
-      <Stack.Screen
-        name="MainTabs"
-        component={MainTabs}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Chat"
-        component={ChatScreen}
-        options={({ route }) => ({
-          title: '',
-          headerBackTitleVisible: true,
-        })}
-      />
-    </Stack.Navigator>
-  );
-}
-
-// Main App Component
-export default function App() {
-  const { isDarkMode } = useThemeStore();
-  const { setUser } = useAuthStore();
-  const [isReady, setIsReady] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const colors = isDarkMode ? darkColors : lightColors;
-
-  useEffect(() => {
-    initializeApp();
-    setupRealtime();
-    setupNotifications();
-
-    return () => {
-      cleanup();
-    };
-  }, []);
-
-  const initializeApp = async () => {
-    try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-        await initializePresence(user.id);
-        await registerForPushNotifications(user.id);
-      }
-    } catch (error) {
-      console.error('Error initializing app:', error);
-    }
-  };
-
-  const setupRealtime = () => {
-    // Subscribe to auth changes
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        setUser(session.user);
-        await initializePresence(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        await cleanup();
-      }
-    });
-  };
-
-  const setupNotifications = () => {
-    // Handle notification responses
-    Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification.request.content.data;
-      if (data.conversationId) {
-        // Navigate to conversation
-        console.log('Open conversation:', data.conversationId);
-      }
-    });
-  };
-
-  const handleSplashFinish = () => {
-    setShowSplash(false);
-    setIsReady(true);
-  };
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <StatusBar style={isDarkMode ? 'light' : 'dark'} />
-          {showSplash && <AnimatedSplashScreen onFinish={handleSplashFinish} />}
-          {isReady && <AppNavigator />}
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </QueryClientProvider>
-  );
-        }
+export default App;
